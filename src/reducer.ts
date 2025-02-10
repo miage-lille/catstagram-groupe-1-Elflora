@@ -13,7 +13,7 @@ export type State = {
 }
 
 export const defaultState: State = {
-  counter: 0,
+  counter: 3,
   pictures: fakeData,
   selectedPicture: none,
 }
@@ -40,8 +40,8 @@ const decrement = (): Decrement => ({ type: 'DECREMENT' });
 const fetchCatsRequest = (): FetchCatsRequest => ({ type: 'FETCH_CATS_REQUEST' });
 const fetchCatsCommit = (pictures: Picture[]): FetchCatsCommit => ({ type: 'FETCH_CATS_COMMIT', pictures });
 const fetchCatsRollback = (): FetchCatsRollback => ({ type: 'FETCH_CATS_ROLLBACK' });
-const selectPicture = (picture: Picture): SelectPicture => ({ type: 'SELECT_PICTURE', picture });
-const closeModal = (): CloseModal => ({ type: 'CLOSE_MODAL' });
+export const selectPicture = (picture: Picture): SelectPicture => ({ type: 'SELECT_PICTURE', picture });
+export const closeModal = (): CloseModal => ({ type: 'CLOSE_MODAL' });
 
 
 
@@ -65,6 +65,8 @@ export const reducer = (state: State | undefined, action: Actions): State | Loop
       return { ...state, counter: state.counter + 1};
     case 'DECREMENT':
       return { ...state, counter: Math.max(3, state.counter - 1) };
+    case 'FETCH_CATS_COMMIT':
+      return { ...state, pictures: action.pictures };
     case 'SELECT_PICTURE':
       return { ...state, selectedPicture: some(action.picture) };
     case 'CLOSE_MODAL':
@@ -78,8 +80,7 @@ export const reducer = (state: State | undefined, action: Actions): State | Loop
           failActionCreator: fetchCatsRollback,
         })
       );
-    case 'FETCH_CATS_COMMIT':
-      return { ...state, pictures: action.pictures };
+    
     case 'FETCH_CATS_ROLLBACK':
       return { ...state, pictures: [] };
   }

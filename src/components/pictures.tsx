@@ -1,7 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { getSelectedPicture, picturesSelector } from '../reducer';
+import { counterSelector, getSelectedPicture, picturesSelector, selectPicture, closeModal } from '../reducer';
+import { Picture } from '../types/picture.type';
+import ModalPortal from './modal';
 
 const Container = styled.div`
   padding: 1rem;
@@ -20,40 +22,42 @@ const Image = styled.img`
   }
 `;
 const Pictures = () => {
-  const pictures = useSelector(picturesSelector);
-  return (
-    <div>
-      {pictures.map((pic, index) => (
-        <img key={index} src={pic.previewFormat} alt={`Cat ${index}`} />
-      ))}
-    </div>
-  );
-};
-
-/*const Pictures = () => {
   const dispatch = useDispatch();
   const pictures = useSelector(picturesSelector);
+  const counter = useSelector(counterSelector);
   const selectedPicture = useSelector(getSelectedPicture);
 
+  const handleClickPicture = (pic: Picture) => {
+    dispatch(selectPicture(pic));
+  };
+
+  const handleCloseModal = () => {
+    dispatch(closeModal());
+  };
+  
   return (
     <>
       <Container>
-        {pictures.map((pic, index) => (
-          <Image key={index} src={pic.previewFormat} alt={`Cat ${index}`} onClick={() => dispatch(selectPicture(pic))} />
+        {pictures.slice(0, counter).map((pic, index) => (
+          <Image
+            key={index}
+            src={pic.previewFormat}
+            alt={`Cat ${index}`}
+            onClick={() => handleClickPicture(pic)}
+          />
         ))}
       </Container>
 
-      {selectedPicture && (
-        <ModalContainer onClick={() => dispatch(closeModal())}>
-          <ModalContent onClick={(e) => e.stopPropagation()}>
-            <img src={selectedPicture.largeFormat} alt="Large Cat" style={{ maxWidth: '100%' }} />
-            <p>Author: {selectedPicture.author}</p>
-            <CloseButton onClick={() => dispatch(closeModal())}>Close</CloseButton>
-          </ModalContent>
-        </ModalContainer>
+      {selectedPicture._tag === 'Some' && (
+        <ModalPortal
+          largeFormat={selectedPicture.value.largeFormat}
+          author={selectedPicture.value.author}
+          close={handleCloseModal}
+        />
       )}
     </>
   );
-};*/
+};
 
 export default Pictures;
+
