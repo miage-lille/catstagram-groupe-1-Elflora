@@ -3,81 +3,49 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 
 const Container = styled.div`
-  position: fixed;
-  z-index: 1000;
-  top: 0;
+  position: fixed; 
+  z-index: 1;
+  padding-top: 50px;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.8);
-`;
-
-const ModalContent = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
+  top: 0;
+  width: 100%; 
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9); 
 `;
 
 const Button = styled.button`
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: red;
-  color: white;
-  border: none;
-  font-size: 20px;
+  top: 15px;
+  right: 35px;
+  color: black;
+  font-size: 40px;
   font-weight: bold;
-  cursor: pointer;
-  padding: 5px 10px;
-  border-radius: 5px;
-  
-  &:hover {
-    background: darkred;
-  }
 `;
 
 const Image = styled.img`
-  max-width: 80%;
-  max-height: 80vh;
-  border-radius: 5px;
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
 `;
 
 interface ModalProps {
   largeFormat: string;
-  author: string;
   close(): void;
 }
 
-const Modal = ({ largeFormat, author, close }: ModalProps) => {
-  console.log("Image URL:", largeFormat);
+const Modal = ({ largeFormat, close }: ModalProps) => {
   return (
-    /*<Container onClick={close}>  {}
-      <ModalContent onClick={(e) => e.stopPropagation()}>  {}
-        <Button onClick={close}>X</Button>
-        <Image src={largeFormat} alt="Large Preview" />
-      </ModalContent>
-    </Container>*/
-
     <Container>
-      <ModalContent>
-        <Image src={largeFormat} alt="Large Preview" />
-        <p>Photo by: {author}</p>
-        <Button onClick={close}>X</Button>
-      </ModalContent>
+      <Image src={largeFormat} />
+      <Button onClick={close}>X</Button>
     </Container>
   );
 };
 
 const portalRoot = document.getElementById('modal');
 
-const ModalPortal = ({ largeFormat, author, close }: ModalProps) =>
-  portalRoot ? ReactDOM.createPortal(<Modal largeFormat={largeFormat} author={author} close={close}/>, portalRoot) : null;
+const ModalPortal = ({ largeFormat, close }: ModalProps) =>
+  portalRoot ? ReactDOM.createPortal(<Modal largeFormat={largeFormat} close={close} />, portalRoot) : null;
 
 export default ModalPortal;

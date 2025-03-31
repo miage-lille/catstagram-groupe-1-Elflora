@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { decrement, fetchCatsRequest, increment } from '../actions';
+import { useSelector, useDispatch } from 'react-redux';
 import { counterSelector } from '../reducer';
-import { decrement, increment } from '../actions';
 
 const Container = styled.div`
   padding: 16px;
@@ -38,11 +38,22 @@ const DisplayCounter = styled.span`
 const Counter = () => {
   const counter = useSelector(counterSelector);
   const dispatch = useDispatch();
+
+  const handleIncrement = () => {
+    dispatch(increment());  
+    dispatch(fetchCatsRequest(counter + 1));  
+  };
+
+  const handleDecrement = () => {
+    dispatch(decrement());  
+    dispatch(fetchCatsRequest(counter - 1));
+  };
+
   return (
     <Container>
-      <Button onClick={() => dispatch(decrement())} disabled={counter === 3}> - </Button>
+      <Button onClick={handleDecrement} disabled={counter === 3}> - </Button>
       <DisplayCounter>{counter}</DisplayCounter>
-      <Button onClick={() => dispatch(increment())}> + </Button>
+      <Button onClick={handleIncrement}> + </Button>
     </Container>
   );
 };

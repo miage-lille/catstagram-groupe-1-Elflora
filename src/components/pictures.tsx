@@ -1,9 +1,10 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { counterSelector, getSelectedPicture, picturesSelector, selectPicture, closeModal } from '../reducer';
-import { Picture } from '../types/picture.type';
+import { picturesSelector, getSelectedPicture } from '../reducer';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectPicture, closeModal } from '../types/actions.type';
 import ModalPortal from './modal';
+import { isSome } from 'fp-ts/Option';
 
 const Container = styled.div`
   padding: 1rem;
@@ -21,43 +22,48 @@ const Image = styled.img`
     transform: scale(1.2);
   }
 `;
+
 const Pictures = () => {
-  const dispatch = useDispatch();
   const pictures = useSelector(picturesSelector);
-  const counter = useSelector(counterSelector);
   const selectedPicture = useSelector(getSelectedPicture);
+  const dispatch = useDispatch();
 
-  const handleClickPicture = (pic: Picture) => {
-    dispatch(selectPicture(pic));
-  };
+  if (pictures.status === 'loading') {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '10vh',
+        fontSize: '1.5rem'
+      }}>
+        Loading...
+      </div>
+    );
+      }
 
-  const handleCloseModal = () => {
-    dispatch(closeModal());
-  };
-  
+  if (pictures.status === 'failure') {
+    return <div>Error: {pictures.error}</div>;
+  }
+
   return (
-    <>
-      <Container>
-        {pictures.slice(0, counter).map((pic, index) => (
-          <Image
-            key={index}
-            src={pic.previewFormat}
-            alt={`Cat ${index}`}
-            onClick={() => handleClickPicture(pic)}
-          />
-        ))}
-      </Container>
-
-      {selectedPicture._tag === 'Some' && (
+    <Container>
+      {pictures.data.map((pic, index) => (
+        <Image
+          key={index}
+          src={pic.webFormat} 
+          alt={`Picture ${index}`}
+          onClick={() => dispatch(selectPicture(pic))}
+        />
+      ))}
+      {isSome(selectedPicture) && (
         <ModalPortal
           largeFormat={selectedPicture.value.largeFormat}
-          author={selectedPicture.value.author}
-          close={handleCloseModal}
+          close={() => dispatch(closeModal())}
         />
       )}
-    </>
+    </Container>
   );
 };
 
 export default Pictures;
-
